@@ -78,7 +78,6 @@ class Post(BlogBaseModel):
         return f"{self.title[:MAX_LENGTH]} | {self.text}"
 
 
-
 class Comment(models.Model):
     text = models.TextField("Комментарии")
     post = models.ForeignKey(Post, on_delete=models.CASCADE,

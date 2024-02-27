@@ -42,6 +42,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class LocationAdmin(admin.ModelAdmin):
     list_display = ("name",)
 
+
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("name","text","created_at","post")
+    list_display = ("name", "text", "created_at", "post",)
