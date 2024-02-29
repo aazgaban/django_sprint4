@@ -9,6 +9,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
+    'www.aazgaban.pythonanywhere.com',
+    'aazgaban.pythonanywhere.com',
 ]
 
 INSTALLED_APPS = [
@@ -101,7 +103,7 @@ INTERNAL_IPS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_URL = "blog:index"
+LOGIN_URL = "login"
 
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 

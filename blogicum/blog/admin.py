@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Location, Post, Comment
+from .models import Category, Comment, Location, Post
 
 admin.site.empty_value_display = "Не задано"
 
@@ -45,4 +45,4 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("name", "text", "created_at", "post",)
+    list_display = ("text", "created_at", "post",)

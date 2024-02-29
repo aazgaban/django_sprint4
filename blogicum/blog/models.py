@@ -1,16 +1,21 @@
-from blog.manager import PostManager
-from core.models import BlogBaseModel
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from blog.managers import PostManager
 from blogicum.constants import MAX_LENGTH, TITLE
+from core.models import BlogBaseModel
 
 User = get_user_model()
 
 
 class Category(BlogBaseModel):
-    title = models.CharField(TITLE, max_length=MAX_LENGTH)
-    description = models.TextField("Описание")
+    title = models.CharField(
+        TITLE,
+        max_length=MAX_LENGTH
+    )
+    description = models.TextField(
+        "Описание"
+    )
     slug = models.SlugField(
         "Идентификатор",
         unique=True,
@@ -38,8 +43,13 @@ class Location(BlogBaseModel):
 
 
 class Post(BlogBaseModel):
-    title = models.CharField(TITLE, max_length=MAX_LENGTH)
-    text = models.TextField("Текст")
+    title = models.CharField(
+        TITLE,
+        max_length=MAX_LENGTH
+    )
+    text = models.TextField(
+        "Текст"
+    )
     pub_date = models.DateTimeField(
         "Дата и время публикации",
         help_text="Если установить дату и время в будущем — можно делать"
@@ -65,22 +75,37 @@ class Post(BlogBaseModel):
         null=True,
         verbose_name="Категория",
     )
-    image = models.ImageField("Фото", upload_to="posts_images", blank=True)
+    image = models.ImageField(
+        "Фото",
+        upload_to="posts_images",
+        blank=True
+    )
+
     objects = models.Manager()
-    is_pub = PostManager()
+    published_posts = PostManager()
 
     class Meta:
         verbose_name = "публикация"
         verbose_name_plural = "Публикации"
-        ordering = ["-pub_date"]
+        ordering = ("-pub_date",)
 
     def __str__(self):
         return f"{self.title[:MAX_LENGTH]} | {self.text}"
 
 
 class Comment(models.Model):
-    text = models.TextField("Комментарии")
-    post = models.ForeignKey(Post, on_delete=models.CASCADE,
-                             related_name="comments")
-    created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField(
+        "Комментарии"
+    )
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
