@@ -13,6 +13,7 @@ User = get_user_model()
 class ProfileSuccessUrlMixin:
     model = Post
     template_name = "blog/create.html"
+
     def get_success_url(self):
         return reverse(
             "blog:profile", kwargs={"username": self.request.user.username}
@@ -34,6 +35,7 @@ class AuthorRequiredAndPostSuccessUrlMixin(UserPassesTestMixin):
 
 class PostFormValidMixin:
     form_class = PostForm
+
     def form_valid(self, form):
         form.instance.author = get_object_or_404(
             User, username=self.request.user.username
