@@ -112,4 +112,3 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 MEDIA_ROOT = BASE_DIR / "media"
 
 CSRF_FAILURE_VIEW = "pages.views.csrf_failure"
-

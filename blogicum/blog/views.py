@@ -20,11 +20,11 @@ class PostDetailView(DetailView):
 
     def get_object(self, queryset=None):
         user = self.request.user if not isinstance(self.request.user,
-                                               AnonymousUser) else None
+                                                   AnonymousUser) else None
         return get_object_or_404(
             Post,
-            Q(id=self.kwargs["post_id"]) &
-            (Q(author=user) | Q(is_published=True))
+            Q(id=self.kwargs["post_id"])
+            & (Q(author=user) | Q(is_published=True))
         )
 
     def get_context_data(self, **kwargs):
@@ -65,10 +65,6 @@ class PostUpdateView(
 
 ):
     pk_url_kwarg = "post_id"
-
-
-
-
 
 
 class PostDeleteView(
@@ -113,7 +109,6 @@ class ProfileDetailView(ListView):
             .order_by("-pub_date")
         )
         return query_set
-
 
     def get_context_data(self, **kwargs):
         return dict(

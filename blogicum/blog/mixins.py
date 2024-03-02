@@ -18,12 +18,14 @@ class ProfileSuccessUrlMixin:
             "blog:profile", kwargs={"username": self.request.user.username}
         )
 
+
 class AuthorRequired(UserPassesTestMixin):
     def test_func(self):
         return (
             self.request.user.is_authenticated
             and self.request.user == self.get_object().author
         )
+
 
 class AuthorRequiredAndPostSuccessUrlMixin(AuthorRequired):
     def get_success_url(self):
@@ -41,7 +43,7 @@ class PostFormValidMixin:
         )
         return super().form_valid(form)
 
+
 class RedirectNoPermissionMixin(AuthorRequired):
     def handle_no_permission(self):
         return redirect("blog:post_detail", post_id=self.get_object().id)
-
