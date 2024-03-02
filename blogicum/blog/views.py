@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseRedirect
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect
@@ -9,15 +9,12 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 
 from blogicum.constants import PAGE_NUM
 from .forms import CommentForm, PostForm, ProfileForm
-from .mixins import (AuthorRequiredAndPostSuccessUrlMixin, DispatchAuthorMixin,
+from .mixins import (AuthorRequiredAndPostSuccessUrlMixin, RedirectNoPermissionMixin,
                      PostFormValidMixin, ProfileSuccessUrlMixin)
 from .models import Category, Comment, Post, User
 
 
-class PostDetailView(
-    DetailView,
-    LoginRequiredMixin,
-):
+class PostDetailView(DetailView):
     form_class = CommentForm
     template_name = "blog/detail.html"
 
@@ -56,24 +53,27 @@ class PostCreateView(
     ProfileSuccessUrlMixin,
     CreateView
 ):
-    form_class = PostForm
+    pass
 
 
 class PostUpdateView(
-    DispatchAuthorMixin,
+    RedirectNoPermissionMixin,
     PostFormValidMixin,
+    LoginRequiredMixin,
     ProfileSuccessUrlMixin,
     UpdateView,
-    LoginRequiredMixin,
+
 ):
     pk_url_kwarg = "post_id"
 
 
 
 
+
+
 class PostDeleteView(
-    DispatchAuthorMixin,
     ProfileSuccessUrlMixin,
+    RedirectNoPermissionMixin,
     DeleteView,
     LoginRequiredMixin
 ):
@@ -112,15 +112,8 @@ class ProfileDetailView(ListView):
             .annotate(comment_count=Count("comments"))
             .order_by("-pub_date")
         )
-        if (
-                self.request.user.is_authenticated
-                and self.request.user == self.get_object()
-        ):
-            return query_set
-        else:
-            return Post.published_posts.filter(
-                Q(author__username=username)
-            )
+        return query_set
+
 
     def get_context_data(self, **kwargs):
         return dict(
