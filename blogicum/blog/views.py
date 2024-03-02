@@ -1,16 +1,16 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponseRedirect
 from django.db.models import Count, Q
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from blogicum.constants import PAGE_NUM
+
 from .forms import CommentForm, PostForm, ProfileForm
-from .mixins import (AuthorRequiredAndPostSuccessUrlMixin, RedirectNoPermissionMixin,
-                     PostFormValidMixin, ProfileSuccessUrlMixin)
+from .mixins import (AuthorRequiredAndPostSuccessUrlMixin, PostFormValidMixin,
+                     ProfileSuccessUrlMixin, RedirectNoPermissionMixin)
 from .models import Category, Comment, Post, User
 
 
@@ -194,7 +194,6 @@ class DeleteCommentView(
     DeleteView,
     LoginRequiredMixin
 ):
-    model = Comment
     template_name = "blog/comment.html"
 
     def get_object(self, queryset=None):
