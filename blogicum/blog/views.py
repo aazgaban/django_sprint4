@@ -77,11 +77,10 @@ class PostDeleteView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        instance = get_object_or_404(
+        context["form"] = PostForm(instance=get_object_or_404(
             Post,
             pk=self.kwargs.get("post_id")
-        )
-        context["form"] = PostForm(instance=instance)
+        ))
         return context
 
 
