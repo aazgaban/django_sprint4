@@ -1,6 +1,8 @@
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.db.models import Count, Q
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
@@ -14,23 +16,19 @@ from .models import Category, Comment, Post, User
 
 class PostDetailView(
     DetailView,
-    LoginRequiredMixin
+    LoginRequiredMixin,
 ):
     form_class = CommentForm
     template_name = "blog/detail.html"
 
     def get_object(self, queryset=None):
-        if self.request.user.is_authenticated:
-            return get_object_or_404(
-                Post,
-                Q(id=self.kwargs.get("post_id"))
-                & (Q(author=self.request.user) | Q(is_published=True))
-            )
-        else:
-            return get_object_or_404(
-                Post,
-                Q(id=self.kwargs.get("post_id"), is_published=True)
-            )
+        user = self.request.user if not isinstance(self.request.user,
+                                               AnonymousUser) else None
+        return get_object_or_404(
+            Post,
+            Q(id=self.kwargs["post_id"]) &
+            (Q(author=user) | Q(is_published=True))
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -39,9 +37,7 @@ class PostDetailView(
         return context
 
 
-class PostListView(
-    ListView
-):
+class PostListView(ListView):
     model = Post
     paginate_by = PAGE_NUM
     template_name = "blog/index.html"
@@ -68,9 +64,11 @@ class PostUpdateView(
     PostFormValidMixin,
     ProfileSuccessUrlMixin,
     UpdateView,
-    LoginRequiredMixin
+    LoginRequiredMixin,
 ):
     pk_url_kwarg = "post_id"
+
+
 
 
 class PostDeleteView(
@@ -149,10 +147,9 @@ class CategoryListView(ListView):
     paginate_by = PAGE_NUM
 
     def get_queryset(self):
-        query_set = Post.published_posts.filter(
+        return Post.published_posts.filter(
             category__slug=self.kwargs["category_slug"]
         )
-        return query_set
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -208,10 +205,13 @@ class DeleteCommentView(
     template_name = "blog/comment.html"
 
     def get_object(self, queryset=None):
-        post_id = self.kwargs.get("post_id")
-        comment_id = self.kwargs.get("comment_id")
         return get_object_or_404(
             Comment,
-            id=comment_id,
-            post=post_id
+            id=self.kwargs.get("comment_id"),
+            post=self.kwargs.get("post_id")
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = None
+        return context

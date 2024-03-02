@@ -7,10 +7,7 @@ SECRET_KEY = "django-insecure-!(u8#vo$__kllr2k_r#j1h-386*g$u*)9b$&e%o9bduxf-&k-0
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "localhost",
     "127.0.0.1",
-    'www.aazgaban.pythonanywhere.com',
-    'aazgaban.pythonanywhere.com',
 ]
 
 INSTALLED_APPS = [
@@ -21,6 +18,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_bootstrap5",
+
     "blog.apps.BlogConfig",
     "pages.apps.PagesConfig",
     "debug_toolbar",
@@ -114,3 +112,4 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 MEDIA_ROOT = BASE_DIR / "media"
 
 CSRF_FAILURE_VIEW = "pages.views.csrf_failure"
+

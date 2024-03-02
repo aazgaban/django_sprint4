@@ -25,3 +25,10 @@ tomli==2.0.1
 yapf==0.32.0
 beautifulsoup4==4.11.2
 
+
+soupsieve~=2.5
+pip~=23.0.1
+snowballstemmer~=2.2.0
+setuptools~=58.1.0
+django-debug-toolbar~=4.3.0
+pydocstyle~=6.3.0
