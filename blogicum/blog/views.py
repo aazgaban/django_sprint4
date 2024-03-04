@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import AnonymousUser
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -15,16 +14,15 @@ from .models import Category, Comment, Post, User
 
 
 class PostDetailView(DetailView):
-    form_class = CommentForm
     template_name = "blog/detail.html"
 
     def get_object(self, queryset=None):
-        user = self.request.user if not isinstance(self.request.user,
-                                                   AnonymousUser) else None
         return get_object_or_404(
             Post,
-            Q(id=self.kwargs["post_id"])
-            & (Q(author=user) | Q(is_published=True))
+            Q(id=self.kwargs["post_id"]),
+            (Q(is_published=True)
+             | Q(author__username=self.request.user.username)
+             )
         )
 
     def get_context_data(self, **kwargs):
@@ -35,7 +33,6 @@ class PostDetailView(DetailView):
 
 
 class PostListView(ListView):
-    model = Post
     paginate_by = PAGE_NUM
     template_name = "blog/index.html"
 
@@ -96,9 +93,8 @@ class ProfileDetailView(ListView):
         )
 
     def get_queryset(self):
-        username = self.kwargs["username"]
         query_set = (
-            Post.objects.filter(Q(author__username=username))
+            Post.objects.filter(Q(author__username=self.kwargs["username"]))
             .annotate(comment_count=Count("comments"))
             .order_by("-pub_date")
         )
