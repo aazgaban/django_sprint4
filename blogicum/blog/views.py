@@ -93,12 +93,10 @@ class ProfileDetailView(ListView):
         )
 
     def get_queryset(self):
-        query_set = (
-            Post.objects.filter(Q(author__username=self.kwargs["username"]))
-            .annotate(comment_count=Count("comments"))
-            .order_by("-pub_date")
-        )
-        return query_set
+        return Post.objects.filter(
+            Q(author__username=self.kwargs["username"])
+        ).annotate(comment_count=Count("comments")
+        ).order_by("-pub_date")
 
     def get_context_data(self, **kwargs):
         return dict(
